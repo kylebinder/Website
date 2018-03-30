@@ -1,5 +1,5 @@
-title = "Kyle Binder"
-baseURL = "https://example.com"
+title = "Home"
+baseURL = "https://kylebinder.netlify.com"
 languageCode = "en-us"
 theme = "gohugo-theme-ananke"
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]

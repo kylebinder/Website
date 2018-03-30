@@ -1,0 +1,10 @@
+base
+RSocrata
+dplyr
+ggplot2
+ggthemes
+tidyr
+knitr
+ggmap
+ggrepel
+bindrcpp

@@ -1,0 +1,211 @@
+---
+title: Red Light Violations in Chicago
+author: Kyle Binder
+date: '2018-03-30'
+slug: red-light-violations-in-chicago
+categories: []
+tags:
+  - R
+  - Chicago Data Portal
+featured_image: '/images/red_light.jpg'
+---
+
+
+
+<p>In this post, we’ll explore the Red Light Camera Violations dataset accessed through the <a href="https://data.cityofchicago.org/">Chicago Data Portal</a>, provided by the City of Chicago. This is just one of numerous datasets available through the portal; topics range from building permits to divvy bikes to crime data, weather data, and many more.</p>
+<p>We can use the <a href="https://dev.socrata.com/">Socrata Open Data API</a> to pull down and analyze the dataset.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> Lucky for us, developers at the City of Chicago have written an R package called RSocrata that allows for easy interaction with Socrata datasets in a few simple functions.</p>
+<p>You can install the latest version of RSocrata available via GitHub:</p>
+<pre class="r"><code>devtools::install_github(&quot;RSocrata&quot;)</code></pre>
+<p>We’ll use the following packages in this post:</p>
+<pre class="r"><code>library(RSocrata)
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+library(tidyr)
+library(knitr)
+library(ggmap)
+library(ggrepel)</code></pre>
+<p>Now we can load the red light dataset by passing a Socrata-valid url, <a href="https://data.cityofchicago.org/Transportation/Red-Light-Camera-Violations/spqx-js37">found here</a> using the export functionality, to the <code>read.socrata()</code> function. The data are available from July 2014 to present and contain a number of characterics for each recorded red light violation in the city, including the location (address, intersection, coordinates), camera identifier, and violation date.</p>
+<pre class="r"><code>red_light_data &lt;- read.socrata(&quot;https://data.cityofchicago.org/resource/twfh-866z.json&quot;)
+head(as_tibble(red_light_data))</code></pre>
+<pre><code>## # A tibble: 6 x 11
+##                   address camera_id                         intersection
+##                     &lt;chr&gt;     &lt;chr&gt;                                &lt;chr&gt;
+## 1 3100 S DR MARTIN L KING      2121 31ST ST AND MARTIN LUTHER KING DRIVE
+## 2      0 S CENTRAL AVENUE      1751                  MADISON AND CENTRAL
+## 3     1600 N HOMAN AVENUE      1771              HOMAN/KIMBALL AND NORTH
+## 4  5200 W IRVING PARK ROA      1533              IRVING PARK AND LARAMIE
+## 5         0 N ASHLAND AVE      1911                  ASHLAND AND MADISON
+## 6  4700 W IRVING PARK ROA      2763           IRVING PARK AND KILPATRICK
+## # ... with 8 more variables: violation_date &lt;dttm&gt;, violations &lt;chr&gt;,
+## #   latitude &lt;chr&gt;, location.type &lt;chr&gt;, location.coordinates &lt;list&gt;,
+## #   longitude &lt;chr&gt;, x_coordinate &lt;chr&gt;, y_coordinate &lt;chr&gt;</code></pre>
+<p>Let’s construct a time series from the daily count of total red light camera violations in the city of Chicago and plot it.</p>
+<pre class="r"><code># convert (violations, latitude, and longitude to numeric)
+red_light_data &lt;- red_light_data %&gt;%
+  mutate(violations = as.numeric(violations),
+         latitude = as.numeric(latitude),
+         longitude = as.numeric(longitude))
+
+# total daily violations
+daily_count &lt;- red_light_data %&gt;%
+  group_by(violation_date) %&gt;%
+  summarise(n_violations = sum(violations)) %&gt;%
+  # compute seven day moving average
+  mutate(ma_n_violations = (n_violations + lag(n_violations, 1)
+         + lag(n_violations, 2) + lag(n_violations, 3) + lag(n_violations, 4)
+         + lag(n_violations, 5) + lag(n_violations, 6)) / 7) %&gt;%
+  gather(type, count, -violation_date)
+
+# make plot
+ggplot(data = daily_count, 
+       aes(x = violation_date, y = count, group = type, colour = type)) +
+  geom_line(aes(alpha = type)) +
+  scale_alpha_manual(values = c(1, 0.5), guide = FALSE) +
+  scale_colour_manual(values = c(&quot;orange&quot;, &quot;darkblue&quot;),
+                      labels = c(&quot;7-day Moving Average&quot;, 
+                                 &quot;Count of Violations&quot;),
+                      guide = guide_legend(reverse = TRUE)) +
+  xlab(&quot;Date&quot;) +
+  ylab(&quot;No. of Violations&quot;) +
+  ggtitle(&quot;Daily Red Light Camera Violations across Chicago&quot;) +
+  theme_few() +
+  theme(legend.title = element_blank(),
+        legend.position = c(0.8, 0.9))</code></pre>
+<p><img src="/post/2018-02-19-red-light-violations-in-chicago_files/figure-html/time_plot-1.png" width="672" /></p>
+<p>Day-to-day total red light violations in Chicago appear to be highly volatile. A seasonal pattern is also present. Intuitively, violations seems to be higher in the summer and lower in the winter. There is one day in early 2015 that appears to be a major outlier; let’s take a peek.</p>
+<pre class="r"><code>filter(daily_count, count == min(count, na.rm = TRUE))</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   violation_date         type count
+##           &lt;dttm&gt;        &lt;chr&gt; &lt;dbl&gt;
+## 1     2015-02-01 n_violations   385</code></pre>
+<p>Anything interesting about February 1st, 2015? Chicago saw a February record snowfall of <a href="https://www.weather.gov/lot/2015_Feb01_Snow">16.2 inches</a> on that day! The snowy conditions may explain the low number of red light camera violations… in fact it seems a bit surprising that as many as 385 were ticketed in 16 inches of snow. Generally speaking, weather conditions may be a good predictor of red light violations on a given day.</p>
+<p>Which red light camera locations dole out the highest number of violations? Some intersections have more than one camera, but we’ll group those together here. And because it’s likely that some locations have had red light cameras longer than others, we’ll look at average number of violations per day by location.</p>
+<pre class="r"><code>loc_summary &lt;- red_light_data %&gt;%
+  group_by(intersection) %&gt;%
+  # assign same lat/long to given intersection to group all cameras at intersection together
+  mutate(latitude = first(latitude[is.na(latitude) == FALSE]),
+         longitude = first(longitude[is.na(longitude) == FALSE])) %&gt;%
+  group_by(intersection, longitude, latitude) %&gt;%
+  summarise(n_violations = sum(violations),
+            days = length(unique(violation_date))) %&gt;%
+  mutate(avg_violations = n_violations/days) %&gt;%
+  ungroup() %&gt;%
+  arrange(desc(avg_violations))
+
+kable(head(loc_summary %&gt;% 
+             select(intersection, n_violations, days, avg_violations), 
+           10))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">intersection</th>
+<th align="right">n_violations</th>
+<th align="right">days</th>
+<th align="right">avg_violations</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">CICERO AND I55</td>
+<td align="right">72014</td>
+<td align="right">1100</td>
+<td align="right">65.46727</td>
+</tr>
+<tr class="even">
+<td align="left">LAKE SHORE DR AND BELMONT</td>
+<td align="right">71886</td>
+<td align="right">1355</td>
+<td align="right">53.05240</td>
+</tr>
+<tr class="odd">
+<td align="left">VAN BUREN AND WESTERN</td>
+<td align="right">55824</td>
+<td align="right">1355</td>
+<td align="right">41.19852</td>
+</tr>
+<tr class="even">
+<td align="left">LAFAYETTE AND 87TH</td>
+<td align="right">46588</td>
+<td align="right">1345</td>
+<td align="right">34.63792</td>
+</tr>
+<tr class="odd">
+<td align="left">CALIFORNIA AND DIVERSEY</td>
+<td align="right">44974</td>
+<td align="right">1355</td>
+<td align="right">33.19114</td>
+</tr>
+<tr class="even">
+<td align="left">STATE AND 79TH</td>
+<td align="right">44710</td>
+<td align="right">1352</td>
+<td align="right">33.06953</td>
+</tr>
+<tr class="odd">
+<td align="left">STONEY ISLAND AND 76TH</td>
+<td align="right">41728</td>
+<td align="right">1353</td>
+<td align="right">30.84109</td>
+</tr>
+<tr class="even">
+<td align="left">WENTWORTH AND GARFIELD</td>
+<td align="right">39695</td>
+<td align="right">1355</td>
+<td align="right">29.29520</td>
+</tr>
+<tr class="odd">
+<td align="left">ARCHER AND CICERO</td>
+<td align="right">38332</td>
+<td align="right">1321</td>
+<td align="right">29.01741</td>
+</tr>
+<tr class="even">
+<td align="left">99TH AND HALSTED</td>
+<td align="right">33609</td>
+<td align="right">1352</td>
+<td align="right">24.85873</td>
+</tr>
+</tbody>
+</table>
+<p>On the surface, not one part of the city seems to dominate in terms of red light violations. The North, South, and West sides are all represented in the top 10. We can take this a step further by visualing the spatial distribution of red light violations in Chicago using the <code>ggmap</code> package. As seen below, the distribution of average violations per day is heavily right-skewed, so we’ll map the violations on a log scale.</p>
+<pre class="r"><code>ggplot(data = loc_summary, aes(x = avg_violations)) + 
+  geom_histogram(binwidth = 3, fill = &quot;darkblue&quot;, colour = &quot;orange&quot;) +
+  xlab(&quot;Average No. of Red Light Violations per day&quot;) +
+  ylab(&quot;Count&quot;) +
+  ggtitle(&quot;Distribution of Mean Red Light Violations Per Day across Locations &quot;) +
+  theme_few()</code></pre>
+<p><img src="/post/2018-02-19-red-light-violations-in-chicago_files/figure-html/avg_violations_hist-1.png" width="672" /></p>
+<pre class="r"><code>map &lt;- ggmap(get_map(location = &quot;chicago, illinois&quot;, zoom = 11, color = &quot;bw&quot;)) +
+  geom_point(data = loc_summary, aes(x = longitude, 
+                                     y = latitude,
+                                     colour = log(avg_violations)),
+             alpha = 1) +
+  scale_colour_gradient(low = &quot;lightyellow&quot;, high = &quot;darkred&quot;,
+                        name = &quot;Log of Avg. Violations Per Day&quot;) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank(),
+        legend.position = &quot;top&quot;)
+
+map</code></pre>
+<p><img src="/post/2018-02-19-red-light-violations-in-chicago_files/figure-html/camera_map-1.png" width="672" /></p>
+<p>As shown above, the intersection at Cicero and I55 shows the darkest shade of red (65.47 violations per day on average). Let’s add some text labels for the top 5 intersections by average number of violations to make this easier to see.</p>
+<pre class="r"><code>map +  
+  geom_label_repel(data = head(loc_summary, 5), 
+                   aes(x = longitude,
+                       y = latitude,
+                       label = intersection),
+                   size = 2,
+                   min.segment.length = 0)</code></pre>
+<p><img src="/post/2018-02-19-red-light-violations-in-chicago_files/figure-html/camera%20map%20with%20label-1.png" width="672" /></p>
+<p>In the next post, we’ll build a simple predictive model for daily red light violations in Chicago.</p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Note that data from institutions around the world, many many more than just the City of Chicago, is available through Socrata.<a href="#fnref1">↩</a></p></li>
+</ol>
+</div>

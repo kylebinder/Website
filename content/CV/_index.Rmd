@@ -1,0 +1,57 @@
+---
+title: "CV"
+output: html_document
+featured_image: '/images/cb_bay.jpg'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Current Position
+
+***
+
+**Senior Quantitative Specialist** at the Federal Reserve Bank of Chicago  
+April 2016 - Present
+
+***
+
+## Education
+
+**Doctor of Philosophy** in Agricultural Economics  
+Texas A&M University  
+May 2016
+
+**Bachelor of Science** in Financial Economics  
+Centre College  
+May 2012
+
+***
+
+## Publications
+
+Binder, K. and J. Mjelde (2017)., "Fuel Inventory and Price Relationships in the U.S. Electric Power Sector under Regulatory and Market Change." *Journal of Regulatory Economics* 51 (2): 197-219.
+
+Binder, K., J. Mjelde, and R.T. Woodward (2016). "Price Interaction in State Level Renewable Energy Credit Trading Programs." *The Electricity Journal* 29 (4): 15-21.
+
+***
+
+## Previous Experience
+
+**Graduate Assistant** at Texas A&M University  
+Aug 2012 - May 2016  
+
+**Intern** at Parque Aak in Merida, Mexico  
+Jan 2012
+
+**Intern** at Oak Ridge National Laboratory  
+May 2011 - Aug 2011  
+
+***
+
+## Skills
+
+Proficient in R
+
+Experienced in Python, Stata, SAS, SQL

@@ -1,0 +1,33 @@
+title = "Kyle Binder"
+baseURL = "https://example.com"
+languageCode = "en-us"
+theme = "gohugo-theme-ananke"
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+
+MetaDataFormat = "yaml"
+DefaultContentLanguage = "en"
+SectionPagesMenu = "main"
+Paginate = 4 # this is set low for demonstrating with dummy content. Set to a higher number
+googleAnalytics = ""
+enableRobotsTXT = true
+
+[sitemap]
+  changefreq = "monthly"
+  priority = 0.5
+  filename = "sitemap.xml"
+
+[params]
+  favicon = ""
+  description = ""
+  facebook = ""
+  twitter = ""
+  body_classes = "avenir bg-near-white"
+  instagram = ""
+  youtube = ""
+  github = "https://github.com/kylebinder"
+  linkedin = "https://www.linkedin.com/in/kyle-binder-460a7b84/"
+  # choose a background color from any on this page: http://tachyons.io/docs/themes/skins/ and preface it with "bg-"
+  background_color_class = "bg-dark-blue"
+  recent_posts_number = 3
+
+

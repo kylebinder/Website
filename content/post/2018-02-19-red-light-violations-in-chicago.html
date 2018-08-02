@@ -41,7 +41,7 @@ head(as_tibble(red_light_data))</code></pre>
 ## #   latitude &lt;chr&gt;, location.type &lt;chr&gt;, location.coordinates &lt;list&gt;,
 ## #   longitude &lt;chr&gt;, x_coordinate &lt;chr&gt;, y_coordinate &lt;chr&gt;</code></pre>
 <p>Let’s construct a time series from the daily count of total red light camera violations in the city of Chicago and plot it.</p>
-<pre class="r"><code># convert (violations, latitude, and longitude to numeric)
+<pre class="r"><code># convert violations, latitude, and longitude to numeric
 red_light_data &lt;- red_light_data %&gt;%
   mutate(violations = as.numeric(violations),
          latitude = as.numeric(latitude),
@@ -108,63 +108,63 @@ kable(head(loc_summary %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">CICERO AND I55</td>
-<td align="right">76427</td>
-<td align="right">1162</td>
-<td align="right">65.77194</td>
+<td align="right">80977</td>
+<td align="right">1224</td>
+<td align="right">66.15768</td>
 </tr>
 <tr class="even">
 <td align="left">LAKE SHORE DR AND BELMONT</td>
-<td align="right">74974</td>
-<td align="right">1414</td>
-<td align="right">53.02263</td>
+<td align="right">78468</td>
+<td align="right">1476</td>
+<td align="right">53.16260</td>
 </tr>
 <tr class="odd">
 <td align="left">VAN BUREN AND WESTERN</td>
-<td align="right">58203</td>
-<td align="right">1417</td>
-<td align="right">41.07481</td>
+<td align="right">61267</td>
+<td align="right">1479</td>
+<td align="right">41.42461</td>
 </tr>
 <tr class="even">
 <td align="left">LAFAYETTE AND 87TH</td>
-<td align="right">49355</td>
-<td align="right">1407</td>
-<td align="right">35.07818</td>
+<td align="right">52796</td>
+<td align="right">1469</td>
+<td align="right">35.94010</td>
 </tr>
 <tr class="odd">
 <td align="left">STATE AND 79TH</td>
-<td align="right">47309</td>
-<td align="right">1414</td>
-<td align="right">33.45757</td>
+<td align="right">50113</td>
+<td align="right">1476</td>
+<td align="right">33.95190</td>
 </tr>
 <tr class="even">
 <td align="left">CALIFORNIA AND DIVERSEY</td>
-<td align="right">46827</td>
-<td align="right">1417</td>
-<td align="right">33.04658</td>
+<td align="right">48852</td>
+<td align="right">1479</td>
+<td align="right">33.03043</td>
 </tr>
 <tr class="odd">
 <td align="left">STONEY ISLAND AND 76TH</td>
-<td align="right">43970</td>
-<td align="right">1415</td>
-<td align="right">31.07420</td>
+<td align="right">46864</td>
+<td align="right">1469</td>
+<td align="right">31.90197</td>
 </tr>
 <tr class="even">
-<td align="left">WENTWORTH AND GARFIELD</td>
-<td align="right">41452</td>
-<td align="right">1415</td>
-<td align="right">29.29470</td>
+<td align="left">ARCHER AND CICERO</td>
+<td align="right">42489</td>
+<td align="right">1445</td>
+<td align="right">29.40415</td>
 </tr>
 <tr class="odd">
-<td align="left">ARCHER AND CICERO</td>
-<td align="right">40120</td>
-<td align="right">1383</td>
-<td align="right">29.00940</td>
+<td align="left">WENTWORTH AND GARFIELD</td>
+<td align="right">43144</td>
+<td align="right">1470</td>
+<td align="right">29.34966</td>
 </tr>
 <tr class="even">
 <td align="left">99TH AND HALSTED</td>
-<td align="right">35149</td>
-<td align="right">1414</td>
-<td align="right">24.85785</td>
+<td align="right">37228</td>
+<td align="right">1476</td>
+<td align="right">25.22222</td>
 </tr>
 </tbody>
 </table>
@@ -202,7 +202,7 @@ map</code></pre>
                    size = 2,
                    min.segment.length = 0)</code></pre>
 <p><img src="/post/2018-02-19-red-light-violations-in-chicago_files/figure-html/camera%20map%20with%20label-1.png" width="672" /></p>
-<p>In the next post, we’ll build a simple predictive model for daily red light violations in Chicago.</p>
+<p>Finally, we’ll explore the time series properties of the daily count of total red light violations across the city of Chicago</p>
 <div class="footnotes">
 <hr />
 <ol>

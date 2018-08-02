@@ -44,7 +44,7 @@ head(as_tibble(red_light_data))
 
 Let's construct a time series from the daily count of total red light camera violations in the city of Chicago and plot it.
 ```{r time_plot}
-# convert (violations, latitude, and longitude to numeric)
+# convert violations, latitude, and longitude to numeric
 red_light_data <- red_light_data %>%
   mutate(violations = as.numeric(violations),
          latitude = as.numeric(latitude),
@@ -150,4 +150,5 @@ map +
                    min.segment.length = 0)
 ```
 
-In the next post, we'll build a simple predictive model for daily red light violations in Chicago.
+
+Finally, we'll explore the time series properties of the daily count of total red light violations across the city of Chicago

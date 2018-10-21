@@ -1,7 +1,7 @@
 ---
 title: "About"
 description: ""
-featured_image: '/images/cb_bay.jpg'
+featured_image: '/images/avalanche_lake.jpg'
 ---
 
 This site serves as my personal professional website. I plan to use it as an outlet for some musings and pet projects on economics, statistics, sports, food, any combination of these topics, or anything else that catches my eye.

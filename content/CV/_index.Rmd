@@ -45,7 +45,11 @@ May 2012
 
 ## Publications
 
-Binder, K. and J. Mjelde (2017)., "Fuel Inventory and Price Relationships in the U.S. Electric Power Sector under Regulatory and Market Change." *Journal of Regulatory Economics* 51 (2): 197-219.
+Binder, K., M. Pourahmadi, and J. Mjelde (2018). "The role of temporal dependence in factor selection and forecasting oil prices." *Forthcoming in Empirical Economics* 
+
+Binder K. and J. Mjelde (2018). "Projecting impacts of carbon dioxide emission reductions in the U.S. electric power sector: evidence from a data-rich approach." *Forthcoming in Climatic Change*
+
+Binder, K. and J. Mjelde (2017). "Fuel Inventory and Price Relationships in the U.S. Electric Power Sector under Regulatory and Market Change." *Journal of Regulatory Economics* 51 (2): 197-219.
 
 Binder, K., J. Mjelde, and R.T. Woodward (2016). "Price Interaction in State Level Renewable Energy Credit Trading Programs." *The Electricity Journal* 29 (4): 15-21.
 

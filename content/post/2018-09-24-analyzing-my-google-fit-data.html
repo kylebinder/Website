@@ -20,7 +20,7 @@ library(ggthemes)
 library(tibbletime)</code></pre>
 <p>After finding the <code>Daily Summaries.csv</code> file in the download from Google, we can load into R and manipulate to our liking. Luckily, the csv is in a farily clean format already. In the code chunk below, we’re just doing some date formatting and renaming a few columns to be a bit less cumbersome.</p>
 <pre class="r"><code># load data, format date variables
-fit_data &lt;- read.csv(&quot;/Users/ctoohey/Kyle_stuff/Website/data/Daily Summaries.csv&quot;) %&gt;%
+fit_data &lt;- read.csv(&quot;~/data/Daily Summaries.csv&quot;) %&gt;%
   mutate(Date = as.Date(as.character(Date), format = &quot;%Y-%m-%d&quot;)) %&gt;%
   mutate(day = factor(weekdays(Date), levels = c(&quot;Sunday&quot;, &quot;Monday&quot;, &quot;Tuesday&quot;,
                                                  &quot;Wednesday&quot;, &quot;Thursday&quot;, 

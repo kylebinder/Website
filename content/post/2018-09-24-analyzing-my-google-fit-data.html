@@ -36,58 +36,7 @@ names(fit_data)[18:29] &lt;- unlist(
                                        function(x){
                                          str_split(x, &quot;\\.&quot;, n = 2)[[1]][1]
                                        })
-)
-
-head(fit_data)</code></pre>
-<pre><code>##         Date n_calories Distance..m. Average.heart.rate..bpm.
-## 1 2017-12-14   985.0166           NA                       NA
-## 2 2017-12-15  2053.5117           NA                       NA
-## 3 2017-12-16  2053.5117           NA                       NA
-## 4 2017-12-17  2053.5117           NA                       NA
-## 5 2017-12-18  2229.7301           NA                       NA
-## 6 2017-12-19  2403.0131     4828.033                       NA
-##   Max.heart.rate..bpm. Min.heart.rate..bpm. Low.latitude..deg.
-## 1                   NA                   NA                 NA
-## 2                   NA                   NA                 NA
-## 3                   NA                   NA                 NA
-## 4                   NA                   NA                 NA
-## 5                   NA                   NA                 NA
-## 6                   NA                   NA                 NA
-##   Low.longitude..deg. High.latitude..deg. High.longitude..deg.
-## 1                  NA                  NA                   NA
-## 2                  NA                  NA                   NA
-## 3                  NA                  NA                   NA
-## 4                  NA                  NA                   NA
-## 5                  NA                  NA                   NA
-## 6                  NA                  NA                   NA
-##   Average.speed..m.s. Max.speed..m.s. Min.speed..m.s. n_steps
-## 1                  NA              NA              NA      NA
-## 2                  NA              NA              NA      NA
-## 3                  NA              NA              NA      NA
-## 4                  NA              NA              NA      NA
-## 5                  NA              NA              NA      NA
-## 6                  NA              NA              NA    4250
-##   Average.weight..kg. Max.weight..kg. Min.weight..kg. Biking Inactive
-## 1                  NA              NA              NA     NA       NA
-## 2                  NA              NA              NA     NA       NA
-## 3                  NA              NA              NA     NA       NA
-## 4                  NA              NA              NA     NA       NA
-## 5                  NA              NA              NA     NA       NA
-## 6                  NA              NA              NA     NA       NA
-##   Walking Running Basketball Calisthenics Elliptical Golf Kayaking
-## 1      NA      NA         NA           NA         NA   NA       NA
-## 2      NA      NA         NA           NA         NA   NA       NA
-## 3      NA      NA         NA           NA         NA   NA       NA
-## 4      NA      NA         NA           NA         NA   NA       NA
-## 5      NA      NA         NA           NA         NA   NA       NA
-## 6      NA      NA         NA           NA         NA   NA       NA
-##   Treadmill  Weight High      day    month
-## 1        NA      NA   NA Thursday December
-## 2        NA      NA   NA   Friday December
-## 3        NA      NA   NA Saturday December
-## 4        NA      NA   NA   Sunday December
-## 5        NA 1800000   NA   Monday December
-## 6   1500000      NA   NA  Tuesday December</code></pre>
+)</code></pre>
 <p>Next, we’ll plot a time series of daily step totals. To smooth out some of the volatility, we can add the 7-day moving average of daily steps to the plot as well. Finally, we’ll add points to the observations where the 7-day moving average exceedsn 10,000 steps to see when my goal of 10,000 steps is achieved more easily.</p>
 <pre class="r"><code># function to compute moving average (from tibbletime package)
 roll_mean_7 &lt;- rollify(mean, window = 7)

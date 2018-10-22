@@ -29,7 +29,7 @@ library(tibbletime)
 After finding the `Daily Summaries.csv` file in the download from Google, we can load into R and manipulate to our liking. Luckily, the csv is in a farily clean format already. In the code chunk below, we're just doing some date formatting and renaming a few columns to be a bit less cumbersome.
 ```{r data}
 # load data, format date variables
-fit_data <- read.csv("/Users/ctoohey/Kyle_stuff/Website/data/Daily Summaries.csv") %>%
+fit_data <- read.csv("~/Daily Summaries.csv") %>%
   mutate(Date = as.Date(as.character(Date), format = "%Y-%m-%d")) %>%
   mutate(day = factor(weekdays(Date), levels = c("Sunday", "Monday", "Tuesday",
                                                  "Wednesday", "Thursday", 

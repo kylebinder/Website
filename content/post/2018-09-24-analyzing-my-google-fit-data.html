@@ -1,7 +1,7 @@
 ---
 title: Analyzing My Google Fit Data
 author: Kyle Binder
-date: '2018-10-21'
+date: '2018-11-4'
 slug: analyzing-my-google-fit-data
 categories: []
 tags: 
@@ -65,7 +65,7 @@ ggplot(data = ts_plot_data %&gt;% filter(type %in% c(&quot;n_steps&quot;, &quot;
   ggtitle(&quot;Daily Step Count&quot;) +
   theme_few() +
   theme(legend.title = element_blank(),
-        legend.position = c(0.8, 0.9))</code></pre>
+        legend.position = &quot;bottom&quot;)</code></pre>
 <p><img src="/post/2018-09-24-analyzing-my-google-fit-data_files/figure-html/daily_steps_times_series-1.png" width="672" /></p>
 <p>We can use the same procedure to investigate daily calorie burn over time:</p>
 <pre class="r"><code>ggplot(data = ts_plot_data %&gt;% filter(type %in% c(&quot;n_calories&quot;, &quot;ma_n_calories&quot;)), 
@@ -85,7 +85,7 @@ ggplot(data = ts_plot_data %&gt;% filter(type %in% c(&quot;n_steps&quot;, &quot;
   ggtitle(&quot;Daily Calories Burned&quot;) +
   theme_few() +
   theme(legend.title = element_blank(),
-        legend.position = c(0.8, 0.9))</code></pre>
+        legend.position = &quot;bottom&quot;)</code></pre>
 <p><img src="/post/2018-09-24-analyzing-my-google-fit-data_files/figure-html/daily_calories-1.png" width="672" /></p>
 <p>In the next chunk, we’ll look at the distribution of daily steps by day of the week (Sunday, Monday, etc.). Somewhat interestingly, my median daily step count is fairly constant across the week. The distribution of steps is the widest on the weekends, however (some very inactive Fridays, Saturdays, and Sundays, but some really active ones, too!).</p>
 <pre class="r"><code># step count by day of the week

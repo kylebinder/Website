@@ -1,7 +1,7 @@
 ---
 title: Analyzing My Google Fit Data
 author: Kyle Binder
-date: '2018-11-04'
+date: '2018-12-03'
 slug: analyzing-my-google-fit-data
 categories: []
 tags: 
@@ -37,7 +37,8 @@ fit_data <- read.csv("~/data/Daily Summaries.csv") %>%
          month = months(Date)) %>%
   select(-Treadmill.walking.duration..ms.) %>%
   rename(n_steps = Step.count,
-         n_calories = Calories..kcal.)
+         n_calories = Calories..kcal.) %>%
+  filter(Date > "2017-12-31") # 2018 only
 
 # rename the activity duration columns to something less clunky
 names(fit_data)[18:29] <- unlist(
@@ -87,8 +88,8 @@ ggplot(data = ts_plot_data %>% filter(type %in% c("n_calories", "ma_n_calories")
        aes(x = Date, y = value, group = type, colour = type)) +
   geom_line(aes(alpha = type)) +
   geom_point(data = filter(ts_plot_data, 
-                           value >= 2750 & type == "ma_n_calories")) + # add points when 7-day MA over 10,000
-  geom_line(aes(x = Date, y = 2750), colour = "black", linetype = 2,
+                           value >= 2700 & type == "ma_n_calories")) + # add points when 7-day MA over 2700
+  geom_line(aes(x = Date, y = 2700), colour = "black", linetype = 2,
             alpha = 0.3) +
   scale_alpha_manual(values = c(1, 0.5), guide = FALSE) +
   scale_colour_manual(values = c("orange", "darkblue"),
@@ -134,8 +135,9 @@ Finally, let's look at the total amount of time spent performing different types
 mnth_plot_data <- fit_data %>%
   filter(month != "December") %>% # december not a complete month
   select(month, Walking, Running, Basketball, Calisthenics,
-         Elliptical, Golf, Weight, Treadmill) %>%
-  rename(`Weight Lifting` = Weight) %>%
+         Elliptical, Golf, Weight, Treadmill, High) %>%
+  rename(`Weight Lifting` = Weight,
+         HIIT = High) %>%
   gather(type, value, -month) %>%
   group_by(type, month) %>%
   summarise(total_hrs = sum(value/3600000, na.rm = TRUE)) %>%

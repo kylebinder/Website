@@ -1,13 +1,13 @@
 ---
-title: Analyzing My Google Fit Data
-author: Kyle Binder
-date: '2018-12-03'
+title: "Analyzing My Google Fit Data"
+author: "Kyle Binder"
+date: '2018-12-17'
+featured_image: /images/united_center.jpg
 slug: analyzing-my-google-fit-data
+tags:
+- R
+- Google Fit
 categories: []
-tags: 
-  - R
-  - Google Fit
-featured_image: '/images/united_center.jpg'
 ---
 
 ```{r setup, include = FALSE}

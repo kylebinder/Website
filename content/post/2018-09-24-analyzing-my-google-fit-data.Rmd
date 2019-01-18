@@ -1,7 +1,7 @@
 ---
 title: "Analyzing My Google Fit Data"
 author: "Kyle Binder"
-date: '2018-12-17'
+date: '2019-01-18'
 featured_image: /images/united_center.jpg
 slug: analyzing-my-google-fit-data
 tags:
@@ -23,18 +23,20 @@ I was hoping to develop a more accessible picture of my fitness activity by usin
 library(tidyverse)
 library(ggthemes)
 library(tibbletime)
+library(lubridate)
 ```
 
 
 After finding the `Daily Summaries.csv` file in the download from Google, we can load into R and manipulate to our liking. Luckily, the csv is in a farily clean format already. In the code chunk below, we're just doing some date formatting and renaming a few columns to be a bit less cumbersome.
 ```{r data}
 # load data, format date variables
-fit_data <- read.csv("~/data/Daily Summaries.csv") %>%
+fit_data <- read.csv("~/kyle/Website/data/Daily Summaries.csv") %>%
   mutate(Date = as.Date(as.character(Date), format = "%Y-%m-%d")) %>%
   mutate(day = factor(weekdays(Date), levels = c("Sunday", "Monday", "Tuesday",
                                                  "Wednesday", "Thursday", 
                                                  "Friday", "Saturday")),
-         month = months(Date)) %>%
+         month = months(Date),
+         year = year(Date)) %>%
   select(-Treadmill.walking.duration..ms.) %>%
   rename(n_steps = Step.count,
          n_calories = Calories..kcal.) %>%
@@ -133,18 +135,20 @@ Finally, let's look at the total amount of time spent performing different types
 ```{r monthly_activity_by_activity_type}
 # bar plot of average monthly hours of activity by activity type
 mnth_plot_data <- fit_data %>%
-  filter(month != "December") %>% # december not a complete month
-  select(month, Walking, Running, Basketball, Calisthenics,
+  #filter(as.Date(Date) > "2017-12-31") %>%
+  #filter(month != "December") %>% # december not a complete month
+  select(Date, Walking, Running, Basketball, Calisthenics,
          Elliptical, Golf, Weight, Treadmill, High) %>%
   rename(`Weight Lifting` = Weight,
          HIIT = High) %>%
-  gather(type, value, -month) %>%
-  group_by(type, month) %>%
-  summarise(total_hrs = sum(value/3600000, na.rm = TRUE)) %>%
-  mutate(month = factor(month, levels = month.name))
+  mutate(yr_month = as.Date(cut(Date, breaks = "month"))) %>%
+  gather(type, value, -yr_month) %>%
+  group_by(type, yr_month) %>%
+  summarise(total_hrs = sum(value/3600000, na.rm = TRUE))
 
 ggplot(data = mnth_plot_data, 
-       aes(x = month, y = total_hrs, fill = type, 
+       aes(x = yr_month,
+           y = total_hrs, fill = type, 
              label = round(total_hrs, 1))) +
     geom_bar(stat = "identity") +
     theme_few() +
@@ -156,7 +160,7 @@ ggplot(data = mnth_plot_data,
 Walking makes up a significant chunk of my total activity time. Let's look at the same chart, this time with walking removed. 
 ```{r no_walk}
 ggplot(data = mnth_plot_data %>% filter(type != "Walking"), 
-       aes(x = month, y = total_hrs, fill = type, 
+       aes(x = yr_month, y = total_hrs, fill = type, 
              label = round(total_hrs, 1))) +
     geom_bar(stat = "identity") +
     theme_few() +

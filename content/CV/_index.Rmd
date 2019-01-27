@@ -17,9 +17,9 @@ I am a quantitative analyst with a versatile skillset lying at the intersection 
 
 Proficient in R, SQL
 
-Some experience in Python, Stata, SAS
+Some experience in Python, Stata, SAS, Bash scripting
 
-Git, Rmarkdown, some Unix scripting
+User and proponent of Git, Rmarkdown
 
 ***
 

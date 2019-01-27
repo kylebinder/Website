@@ -1,12 +1,9 @@
 ---
 title: "CV"
-output: html_document
+description: ""
 featured_image: '/images/avalanche_lake.jpg'
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 ## Profile
 
 I am a quantitative analyst with a versatile skillset lying at the intersection of statistics, economics, and data science. I have experience working with relational databases, building production-level econometric and statistical models, developing analytical tools used by colleagues (including software packages and applications), and publishing research in peer-reviewed academic journals. I earned a B.S. from Centre College and a Ph.D. from Texas A&M University, where I focused on time series econometrics and energy-related empirical economics issues.

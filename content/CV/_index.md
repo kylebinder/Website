@@ -14,7 +14,7 @@ I am a quantitative analyst with a versatile skillset lying at the intersection 
 
 Proficient in R, SQL
 
-Some experience in Python, Stata, SAS, Bash scripting
+Experienced in Python, Stata, SAS, Bash scripting
 
 User and proponent of Git, Rmarkdown
 
@@ -23,8 +23,8 @@ User and proponent of Git, Rmarkdown
 ## Current Position
 
 
-**Senior Quantitative Specialist** at the Federal Reserve Bank of Chicago  
-April 2016 - Present
+**Lead Quantitative Specialist** at the Federal Reserve Bank of Chicago  
+July 2019 - Present
 
 ***
 
@@ -55,6 +55,9 @@ Binder, K., J. Mjelde, and R.T. Woodward (2016). "Price Interaction in State Lev
 ***
 
 ## Previous Experience
+
+**Senior Quantitative Specialist** at the Federal Reserve Bank of Chicago  
+April 2016 - June 2019
 
 **Graduate Assistant** at Texas A&M University  
 Aug 2012 - May 2016  

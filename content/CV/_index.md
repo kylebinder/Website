@@ -26,6 +26,9 @@ User and proponent of Git, Rmarkdown
 **Lead Quantitative Specialist** at the Federal Reserve Bank of Chicago  
 July 2019 - Present
 
+**Senior Quantitative Specialist** at the Federal Reserve Bank of Chicago  
+April 2016 - June 2019
+
 ***
 
 ## Education
@@ -55,9 +58,6 @@ Binder, K., J. Mjelde, and R.T. Woodward (2016). "Price Interaction in State Lev
 ***
 
 ## Previous Experience
-
-**Senior Quantitative Specialist** at the Federal Reserve Bank of Chicago  
-April 2016 - June 2019
 
 **Graduate Assistant** at Texas A&M University  
 Aug 2012 - May 2016  

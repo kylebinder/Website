@@ -1,15 +1,14 @@
 ---
-title: "Mapping Chicago's 2019 NYE Rideshare Trips"
-author: "Kyle Binder"
-date: "2020-02-16"
-slug: nye-rideshare-trips
-categories: []
+title: Mapping Chicago's 2019 NYE Rideshare Trips
+author: Kyle Binder
+date: '2020-02-16'
 tags:
-  - R
   - Chicago Data Portal
   - geospatial
   - maps
+  - R
   - rideshare
+slug: nye-rideshare-trips
 featured_image: /images/congestion.jpg
 ---
 

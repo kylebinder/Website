@@ -1,7 +1,7 @@
 ---
-title: Mapping Chicago's 2019 NYE Rideshare Trips
-author: Kyle Binder
-date: '2020-02-16'
+title: "Mapping Chicago's 2019 NYE Rideshare Trips"
+author: "Kyle Binder"
+date: "2020-02-16"
 slug: nye-rideshare-trips
 categories: []
 tags:

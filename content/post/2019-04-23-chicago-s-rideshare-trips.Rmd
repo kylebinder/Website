@@ -10,8 +10,7 @@ tags:
   - geospatial
   - maps
   - rideshare
-description: ''
-featured_image: '/congestion/red_light.jpg'
+featured_image: /images/congestion.jpg
 ---
 
 ```{r setup, include = FALSE}

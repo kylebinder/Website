@@ -8,13 +8,15 @@ featured_image: '/images/avalanche_lake.jpg'
 
 I am a quantitative analyst with a versatile skillset lying at the intersection of statistics, economics, and data science. I have experience working with relational databases, building production-level econometric and statistical models, developing analytical tools used by colleagues (including software packages and applications), and publishing research in peer-reviewed academic journals. I earned a B.S. from Centre College and a Ph.D. from Texas A&M University, where I focused on time series econometrics and energy-related empirical economics issues.
 
+I currently serve as the Deputy Lead of the Federal Reserve's commercial real estate stress test modeling team.
+
 ***
 
 ## Skills
 
-Proficient in R, SQL
+Expert in R
 
-Experienced in Python, Stata, SAS, Bash scripting
+Experienced in Python, SQL, Stata, SAS, Bash scripting
 
 User and proponent of Git, Rmarkdown
 
@@ -47,13 +49,23 @@ May 2012
 
 [Google Scholar](https://scholar.google.com/citations?hl=en&user=oxUKuKkAAAAJ)
 
-Binder, K., M. Pourahmadi, and J. Mjelde (2018). "The role of temporal dependence in factor selection and forecasting oil prices." *Forthcoming in Empirical Economics* 
+Binder, K., M. Pourahmadi, and J. Mjelde (2020). "The role of temporal dependence in factor selection and forecasting oil prices." *Empirical Economics* 58 (3): 1185-1223.
 
 Binder K. and J. Mjelde (2018). "Projecting impacts of carbon dioxide emission reductions in the U.S. electric power sector: evidence from a data-rich approach." *Climatic Change* 151 (2): 143-155.
 
 Binder, K. and J. Mjelde (2017). "Fuel Inventory and Price Relationships in the U.S. Electric Power Sector under Regulatory and Market Change." *Journal of Regulatory Economics* 51 (2): 197-219.
 
 Binder, K., J. Mjelde, and R.T. Woodward (2016). "Price Interaction in State Level Renewable Energy Credit Trading Programs." *The Electricity Journal* 29 (4): 15-21.
+
+
+***
+
+## Works in Progress
+
+Binder, K. and J.E. Kim. "Recourse and default in bank portfolio CRE lending."
+
+Binder, K. and N. Klagge. "Underwater: Sea level rise and the commercial real estate market"
+
 
 ***
 

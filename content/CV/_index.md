@@ -80,4 +80,28 @@ Jan 2012
 **Intern** at Oak Ridge National Laboratory  
 May 2011 - Aug 2011  
 
+***
+
+## Activities and Awards
+
+President's Award for Excellence (2019), Federal Reserve Bank of Chicago
+
+Making a Difference Award (2018), Federal Reserve Bank of Chicago
+
+Outstanding PhD Dissertation (2017), Southern Agricultural Economics Association
+
+Top PhD Dissertation (2015-2016), Texas A&M Agricultural Economics
+
+Willie May Harris Fellowship for Outstanding Undergraduate Teaching (2015), Texas A&M College of Agriculture and Life Sciences
+
+Robert E Branson Memorial Scholarship (2013-2014), Texas A&M University
+
+Robert G. Cherry Fellowship (2012-2016), Texas A&M University
+
+Excellence Fellowship (2012), Texas A&M College of Agriculture and Life Sciences
+
+Centre College Men's Basketball Team (2008-2011)
+
+Southern Collegiate Athletic Conference Academic Honor Roll (2008-2011)
+
 

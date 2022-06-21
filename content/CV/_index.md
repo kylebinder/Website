@@ -4,7 +4,7 @@ description: ""
 featured_image: '/images/avalanche_lake.jpg'
 ---
 
-{{< embed-pdf url="/static/images/kyle_binder_CV.pdf" >}}
+[link to CV](/pdfs/kyle_binder_CV.pdf)
 
 ## Profile
 

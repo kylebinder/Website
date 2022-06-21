@@ -4,6 +4,8 @@ description: ""
 featured_image: '/images/avalanche_lake.jpg'
 ---
 
+![]('/images/kyle_binder_CV.pdf')
+
 ## Profile
 
 I am a quantitative analyst with a versatile skillset lying at the intersection of statistics, economics, and data science. I have experience working with relational databases, building production-level econometric and statistical models, developing analytical tools used by colleagues (including software packages and applications), and publishing research in peer-reviewed academic journals. I earned a B.S. from Centre College and a Ph.D. from Texas A&M University, where I focused on time series econometrics and energy-related empirical economics issues.
@@ -25,22 +27,22 @@ User and proponent of Git, Rmarkdown
 ## Current Position
 
 
-**Lead Quantitative Specialist** at the Federal Reserve Bank of Chicago  
+**Lead Quantitative Specialist** at the Federal Reserve Bank of Chicago
 July 2019 - Present
 
-**Senior Quantitative Specialist** at the Federal Reserve Bank of Chicago  
+**Senior Quantitative Specialist** at the Federal Reserve Bank of Chicago
 April 2016 - June 2019
 
 ***
 
 ## Education
 
-**Doctor of Philosophy** in Agricultural Economics  
-Texas A&M University  
+**Doctor of Philosophy** in Agricultural Economics
+Texas A&M University
 May 2016
 
-**Bachelor of Science** in Financial Economics  
-Centre College  
+**Bachelor of Science** in Financial Economics
+Centre College
 May 2012
 
 ***
@@ -71,14 +73,14 @@ Binder, K. and N. Klagge. "Underwater: Sea level rise and the commercial real es
 
 ## Previous Experience
 
-**Graduate Assistant** at Texas A&M University  
-Aug 2012 - May 2016  
+**Graduate Assistant** at Texas A&M University
+Aug 2012 - May 2016
 
-**Intern** at Parque Aak in Merida, Mexico  
+**Intern** at Parque Aak in Merida, Mexico
 Jan 2012
 
-**Intern** at Oak Ridge National Laboratory  
-May 2011 - Aug 2011  
+**Intern** at Oak Ridge National Laboratory
+May 2011 - Aug 2011
 
 ***
 

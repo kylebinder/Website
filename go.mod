@@ -1,3 +1,3 @@
-module github.com/theNewDynamic/gohugo-theme-ananke
+module github.com/kylebinder/Website
 
 go 1.23.3

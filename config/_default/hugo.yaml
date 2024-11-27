@@ -2,7 +2,7 @@ baseURL: https://kylebinder.netlify.app/
 languageCode: en
 DefaultContentLanguage: en
 title: Website of Kyle Binder
-theme: anatole
+#theme: anatole
 ignoreFiles: ["\\.Rmd$", "\\.Rmarkdown$", "_cache$"]
 summarylength: 10
 enableEmoji: yes
@@ -31,3 +31,7 @@ related:
 services:
   disqus: {}
   googleAnalytics: {}
+module:
+  imports:
+  - path: github.com/lxndrblz/anatole  
+

@@ -1,3 +1,5 @@
-module github.com/lxndrblz/anatole-example
+module github.com/kylebinder/Website
 
-go 1.12
+go 1.23.3
+
+require github.com/lxndrblz/anatole v1.16.0 // indirect

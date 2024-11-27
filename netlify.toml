@@ -4,6 +4,7 @@ publish = 'public'
 
 [build.environment]
 HUGO_VERSION = '0.139.2'
+GO_VERSION = '1.23.3'
 
 [context]
 [context.branch-deploy]

@@ -1,0 +1,308 @@
+---
+title: Mapping Chicago's 2019 NYE Rideshare Trips
+author: Kyle Binder
+date: '2020-02-16'
+tags:
+  - Chicago Data Portal
+  - geospatial
+  - maps
+  - R
+  - rideshare
+slug: nye-rideshare-trips
+---
+
++++
+...
+tags = [
+"thumbnail",
+]
+thumbnail= "images/congestion.jpg"
++++
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+	message = FALSE,
+	warning = FALSE,
+	cache = FALSE
+)
+```
+
+Rideshare trips have been a hot topic of discussion in Chicago recently. There is debate about whether the availability of rideshare companies do anything to help or [actually hurt congestion](https://www.npr.org/2018/08/01/634506179/ride-hailing-services-add-to-traffic-congestion-study-says), how rideshare companies [compete with public transportation](https://chicagopolicyreview.org/2019/12/26/uberpool-vs-public-transit-the-race-is-on/), and the extent to which the negative externalities of rideshare are understood (e.g. [obstructing bike lanes](https://www.bikelaneuprising.com/)). This year, Lori Lightfoot (Chicago's Mayor) introduced a new tiered taxing structure for rideshare trips that includes top-tier fees that are the highest in the nation. The tax was introduced with the goal of reducing congestion and pollution.
+
+In this post, I'll take a much more light-hearted look at rideshare trips in Chicago. Inspired by a [talk given by Tina Cormier](https://github.com/tacormier/rstudio-conf-2020/blob/master/presentation_pdf/Rstudio2020_Cormier_Rgeo.pdf) at `rstudio::conf` 2020 about how geospatial analysts have begun to embrace R as a tool, I'll create several nifty maps to explore spatial patterns of rideshare trips in Chicago. Important disclaimer: I am not, by any definition, a geospatial analyst. But I love maps, and there are a number of new(ish) R packages that make mapping in R easy for an amateur like me.
+
+One of the many interesting datasets available from the City of Chicago's [Open Data Portal](https://data.cityofchicago.org/) includes information on every [rideshare trip](https://data.cityofchicago.org/Transportation/Transportation-Network-Providers-Trips/m6dm-c72p) taken in the city. The city requires all Transportation Network Providers (rideshare companies) to report a number of characteristics about every trip, as well as information on every registered driver, vehicle, and driver session. This data is all available through the portal (stripped of any identifying information, of course).
+
+As of the time of this post, the rideshare data available from the portal contained 129 million trips, way more than my laptop can handle on its own. I picked New Year's Eve/Day 2019 to reduce the number of trips to a more manageable size for this analysis. The tradeoff here is that rideshare trips on this particular holiday are *highly unlikely* to be representative of the population of trips throughout time, so I certainly won't be drawing any broad-based conclusions!
+
+The R packages I'll use:
+```{r load_packages}
+library(RSocrata)
+library(tidyverse)
+library(kableExtra)
+library(sf)
+library(leaflet)
+library(ggmap)
+library(lubridate)
+library(gganimate)
+library(ggthemes)
+```
+
+Loading the rideshare data into the R session is as simple as passing a Socrata-valid url (a query to the Socrata API) to the `read.socrata()` function. Information available for each trip includes the trip start and end time, duration and distance of the trip, the pickup and dropoff location, the total fare, the tip, and whether the trips of multiple riders were pooled.
+
+```{r pull_data}
+# query the rideshare data
+rideshare_data <- read.socrata("https://data.cityofchicago.org/resource/m6dm-c72p.json?$where=pickup_centroid_location IS NOT NULL AND dropoff_centroid_location IS NOT NULL AND (trip_start_timestamp between '2018-12-31T08:00:00.000' AND '2019-01-02T00:00:00.000')")
+
+head(as_tibble(rideshare_data))
+```
+
+Now that the data's been loaded, I'll perform a few manipulations to support the spatial analysis. First, I'll read in the the community area number to name mapping from the open data portal. Community areas are [Chicago's 77 official neighborhoods](https://en.wikipedia.org/wiki/Community_areas_in_Chicago) and each is mapped to an integer (e.g. the Loop is community area 32). Next, I'll load geospatial shapefiles for the 77 community areas. These shapefiles contain geocoded polygons that define the boundaries of each of the community areas. I downloaded these files locally; they're available [here](https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-Community-Areas-current-/cauq-8yn6). 
+
+Finally, I join the community area data to the rideshare data and derive several new variables: the total cost of the trip before tip, the tip expressed as a percentage of the cost, and the hour and day during which the trip started.
+
+```{r join_community_names}
+# obtain community area code to string name mapping
+community_areas <- read.socrata("https://data.cityofchicago.org/resource/igwz-8jzy.json")
+
+# read in community area shapefiles
+community_area_sf <- st_read("~/kyle/Website/data/community_areas.kml", 
+                             quiet = TRUE) %>%
+  mutate_at("area_numbe", as.character)
+
+# join community area strings to the rideshare data & basic data cleaning
+chi_data <- left_join(rideshare_data, community_areas %>%
+                     select(area_numbe, community),
+                   by = c("pickup_community_area" = "area_numbe")) %>%
+  rename(pickup_community_char = community) %>%
+  left_join(community_areas,
+            by = c("dropoff_community_area" = "area_numbe")) %>%
+  rename(dropoff_community_char = community) %>%
+  mutate_at(c("fare", "additional_charges", "tip", "trip_miles", 
+              "trips_pooled", "dropoff_centroid_latitude",
+              "dropoff_centroid_longitude", "pickup_centroid_latitude",
+              "pickup_centroid_longitude"), as.numeric) %>%
+  mutate(total_wo_tip = fare + additional_charges,
+         tip_pct = ifelse(tip > 0 & fare > 0, tip/total_wo_tip, NA),
+         hour_of_trip = lubridate::round_date(trip_start_timestamp, unit = "hour"),
+         day_of_trip = lubridate::round_date(trip_start_timestamp, unit = "day")
+         ) 
+```
+
+The below code chunk creates a function that can be used to compute various summary statistics for an arbitrary number of grouping variables. 
+
+```{r fare_distribution}
+# function to compute summary stats by group
+summary_stats <- function(data, ...){
+  
+  group_vars <- enquos(...)
+  
+  data %>%
+    group_by(!!! group_vars) %>%
+    summarise(
+      n_rides = n(),
+      log_n_rides = log(n()),
+      mean_cost = mean(total_wo_tip, na.rm = TRUE),
+      p25_cost = quantile(total_wo_tip, probs = 0.25),
+      med_cost = median(total_wo_tip, na.rm = TRUE),
+      p75_cost = quantile(total_wo_tip, probs = 0.75),
+      sd_cost = sd(total_wo_tip, na.rm = TRUE),
+      mean_distance = mean(trip_miles, na.rm = TRUE),
+      med_distance = median(trip_miles, na.rm = TRUE),
+      share_pooled = length(which(trips_pooled > 1)) / n()*100,
+      share_tipped = length(which(tip > 0)) / n()*100,
+      mean_tip_dollar = mean(tip[tip > 0], na.rm = TRUE),
+      mean_tip_percent = mean(tip_pct, na.rm = TRUE)*100
+    ) %>%
+    mutate_if(is.numeric, round, digits = 2) %>%
+    arrange(desc(n_rides))
+}
+```
+
+I'll use this function to first compute summary statistics by the hour of the day during which the ride began. 
+
+Using this data to plot the number of rides by hour reveals a large spike in the number of rides between midnight and 5am on the 1st. Not surprising that a spike in ridership would occur during this time, but the magnitude is definitely a bit striking!
+
+```{r stats_by_hour, fig.width = 6, fig.height = 5}
+# compute summary statistics by hour
+summary_by_hour <- summary_stats(data = chi_data, hour_of_trip)
+
+# plot number of rides by hour  
+summary_by_hour %>%
+  ggplot(aes(x = hour_of_trip, y = n_rides)) +
+  geom_line(colour = "blue") +
+  xlab("Time") +
+  ylab("No. of Rides") +
+  scale_x_datetime(date_breaks = "4 hours") +
+  ggtitle("Number of Rides per hour") +
+  theme_few() +
+  theme(legend.title = element_blank(),
+        legend.position = c(0.8, 0.9),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Let's add the spatial dimension to the above picture. In the code chunk below, I use the `ggmap` package to first obtain a map of the Chicago area. Then, I add points to the map corresponding to the geo-coded pickup location of each rideshare trip. Finally, I use the `gganimate` package to create individual frames corresponding to all trips occurring in a given hour and compile all of those "hourly" frames into a gif. Pretty cool, and very simple thanks to `gganimate`!
+
+With this animated map, it's easy to observe the massive uptick in rides starting around midnight on New Year's day.
+
+```{r animated_map}
+# reference my personal google maps API key - stored in .Rprofile
+register_google(google_maps_key)
+chicago_raster <- get_map(location = "chicago, illinois", color = "bw")
+
+animated_map <- ggmap(chicago_raster, zoom = 10) +
+  geom_point(data = chi_data, 
+             aes(y = pickup_centroid_latitude,
+                 x = pickup_centroid_longitude),
+             colour = "red") +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank(),) +
+  transition_states(hour_of_trip) +
+  ggtitle("{closest_state}")
+
+animated_map
+```
+
+
+Continuing into the realm of geospatial analysis, let's compute the summary statistics by the community area where the ride ended. The `kableExtra` package provides a number of functions to produce formatted tables for HTML output.
+
+The Near North Side (aka River North), home to a ton of bars, restaurants, and nightclubs, was the most popular rideshare dropoff destination for New Year's 2019 by far. Those familiar with Chicago will not be surprised by the other neighborhoods at the top of the most-frequented list. 
+
+```{r dropoff_stats}
+# compute summary statistics by dropoff community
+dropoff_summary <-
+  summary_stats(data = chi_data, dropoff_community_char,
+                dropoff_community_area) 
+
+# print a formatted table using kableExtra
+dropoff_summary %>%
+  kable(format = "html", digits = 2) %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  scroll_box(height = "300px")
+```
+
+The same suspects rise to the top of the list when computing summary statistics by the neighborhood where the ride began. 
+
+```{r pickup_stats}
+# compute summary statistics by pickup community
+pickup_summary <-
+  summary_stats(data = chi_data, pickup_community_char,
+                pickup_community_area) 
+
+# print a formatted table using kableExtra
+pickup_summary %>%
+  kable(format = "html", digits = 2) %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  scroll_box(height = "300px")
+```
+
+Enough with exploring these statistics in tabular form! We are here for maps. 
+
+I've written a function below that serves as a wrapper for the [leaflet R package](https://rstudio.github.io/leaflet/), an amazingly convenient tool for creating beautiful, interactive maps in R. As a beginner, I could not have found the package documentation more friendly. I encourage you to give it a try for your own mapping fun.
+
+The wrapper below allows me to programmatically pass different summary statistics to create a chloropleth map - color coding each neighborhood corresponding to the value of the summary statistic.
+
+```{r leaflet_map}
+library(leaflet)
+
+create_map <- function(data, fill_var, label_var, caption){
+  
+  fill_var_quo <- enquo(fill_var)
+  label_var_quo <- enquo(label_var)
+  
+  pal <- colorNumeric("YlOrRd", domain = data %>% 
+                        as_tibble() %>% 
+                        select(!! fill_var_quo))
+
+  # crate labels for mouse hover
+  labels <- data %>%
+    as_tibble %>%
+    transmute(labels = purrr::pmap(list(x = dropoff_community_char,
+                                        y = !! label_var_quo),
+                                   function(x, y) {
+                                     paste0(x,
+                                            "<br/>", format(y, big.mark = ","),
+                                                            " ", caption)
+                                   })) %>%
+    unlist(use.names = FALSE) %>%
+    purrr::map(htmltools::HTML)
+  
+  # map
+  rlang::eval_tidy(rlang::quo_squash(quo({
+    data %>%
+      leaflet() %>%
+      setView(lng = -87.679365,
+              lat = 41.840675,
+              zoom = 9.7) %>%
+      # addTiles() %>%
+      addProviderTiles(providers$Stamen.Toner) %>%
+      addPolygons(
+        data = data,
+        fillColor = ~pal(!!fill_var_quo),
+        weight = 2,
+        opacity = 1,
+        color = "white",
+        dashArray = "3",
+        fillOpacity = 0.7,
+        highlight = highlightOptions(
+          weight = 5,
+          color = "#666",
+          dashArray = "",
+          fillOpacity = 0.7,
+          bringToFront = TRUE
+        ),
+        label = labels,
+        labelOptions = labelOptions(
+          style = list("font-weight" = "normal", padding = "3px 8px"),
+          textsize = "15px",
+          direction = "auto"
+        )
+      )
+    })))
+}
+```
+
+Below, I'll use the summary statistics by dropoff community, the community area shapefiles we loaded earlier, and the wrapper function for the `leaflet` package (directly above) to spatially visualize several interesting metrics. Please note you can hover over each community area for the name and numeric value of each statistic.
+
+Remember that the data underlying these maps **only includes New Year's Eve/Day 2019** and that the demographics of rideshare trips taken during this time are almost definitely not representative of the entire population over time. Any inference drawn from this analysis would definitely be subject to selection bias. With enough computing power, it would be a lot of fun to conduct a similar and deeper analysis of *all* available rideshare trips in Chicago.
+
+Thanks for following along! Hopefully I've convinced you that making beautiful maps in R is a straightforward task. 
+
+```{r dropoff_plots}
+# join the community area shapefiles to the dropoff summary stats
+dropoff_summary_sp <- community_area_sf  %>%
+  left_join(dropoff_summary #%>%
+              # filter(dropoff_community_char != "OHARE")
+            , 
+            by = c("area_numbe" = "dropoff_community_area")) %>%
+  as_Spatial() 
+
+# map by number of dropoff rides
+create_map(data = dropoff_summary_sp, fill_var = log_n_rides, 
+           label_var = n_rides, caption = " count of rides dropped off")
+
+# by avg cost
+create_map(data = dropoff_summary_sp, fill_var = mean_cost,
+           label_var = mean_cost, caption = " average cost per ride (dollars)")
+
+# by avg distance
+create_map(data = dropoff_summary_sp, fill_var = mean_distance,
+           label_var = mean_distance, caption = " average miles per ride")
+
+# by avg tip (percent) - for rides that are tipped
+create_map(data = dropoff_summary_sp, fill_var = mean_tip_percent,
+           label_var = mean_tip_percent, caption = " average tip (% of total cost)")
+
+# by share that are tipped
+create_map(data = dropoff_summary_sp, fill_var = share_tipped,
+           label_var = share_tipped, caption = " share of rides that are tipped (%)")
+
+# by share of rides that were pooled
+create_map(data = dropoff_summary_sp, fill_var = share_pooled,
+           label_var = share_pooled, caption = " share of rides were pooled (%)")
+```
+

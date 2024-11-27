@@ -1,0 +1,44 @@
+---
+title: "Analyzing My Google Fit Data"
+author: "Kyle Binder"
+date: '2019-01-18'
+slug: analyzing-my-google-fit-data
+tags:
+- R
+- Google Fit
+categories: []
+---
+
+
+
+
+
+I've been using the Google Fit app to keep track of my fitness activity ever since I purchased my latest cell phone, around the end of 2017. I've found the app relatively easy to use; it provides plenty of options for a variety of different types of workouts, which is a bonus for me.
+
+One thing I find lacking, however, is the ability to analyze/visualize fitness data within the app. Fortunately, fitness data is available for export to csv directly from your Google account. I found this [help page](https://www.maketecheasier.com/export-google-fit-data/) useful. Included in the download is a file titled `Daily Summaries.csv` that contains a number of activites tracked by Google Fit, aggregated on a daily basis. 
+
+I was hoping to develop a more accessible picture of my fitness activity by using some tools readily available in R and the `tidyverse`.
+
+``` r
+library(tidyverse)
+library(ggthemes)
+library(tibbletime)
+library(lubridate)
+```
+
+
+After finding the `Daily Summaries.csv` file in the download from Google, we can load into R and manipulate to our liking. Luckily, the csv is in a farily clean format already. In the code chunk below, we're just doing some date formatting and renaming a few columns to be a bit less cumbersome.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
